@@ -4,7 +4,7 @@ import { VitePluginNode } from 'vite-plugin-node'
 export default defineConfig({
   root: '.',
   optimizeDeps: {
-    exclude: ['fsevents'],
+    exclude: ['*'],
   },
   server: {
     port: 4200,

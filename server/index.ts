@@ -3,6 +3,8 @@ import { API } from './api'
 import http from 'http'
 import { resolve, dirname } from 'path'
 import { Database } from './database'
+import { Authentication } from './authentication'
+import * as bodyParser from 'body-parser'
 
 class Backend {
   // Properties
@@ -27,8 +29,13 @@ class Backend {
   // Constructor
   constructor() {
     this._app = express()
+    // support parsing of application/json type post data
+    this._app.use(bodyParser.json())
+    //support parsing of application/x-www-form-urlencoded post data
+    this._app.use(bodyParser.urlencoded({ extended: true }))
     this._database = new Database()
-    this._api = new API(this._app)
+    const auth = new Authentication('supersecret123', this._app)
+    this._api = new API(this._app, auth)
     this._env = process.env.NODE_ENV || 'development'
 
     this.setupStaticFiles()
