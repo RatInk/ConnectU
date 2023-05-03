@@ -19,18 +19,51 @@ export class Database {
   // Methods
   private initializeDBSchema = async () => {
     console.log('Initializing DB schema...')
-    await this.executeSQL(USER_TABLE)
-    await this.executeSQL(TWEET_TABLE)
+    const conn = await this.startTransaction()
+    await this.executeSQL(USER_TABLE, conn)
+    await this.executeSQL(TWEET_TABLE, conn)
+    this.commitTransaction(conn)
   }
 
-  public executeSQL = async (query: string) => {
+  public startTransaction = async ():Promise<mariadb.PoolConnection | null> => {
     try {
       const conn = await this._pool.getConnection()
+      await conn.beginTransaction()
+      return conn
+    } catch (err) {
+      console.log(err)
+      return null
+    }
+  }
+
+  public commitTransaction = async (conn: any) => {
+    try {
+      await conn.commit()
+      conn.end()
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  public rollbackTransaction = async (conn: any) => {
+    try {
+      await conn.rollback()
+      conn.end()
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  public executeSQL = async (query: string, conn: any):Promise<Array<any>> => {
+    try {
+      if (!conn) return []
       const res = await conn.query(query)
+      console.log(query)
       conn.end()
       return res
     } catch (err) {
       console.log(err)
+      return []
     }
   }
 }

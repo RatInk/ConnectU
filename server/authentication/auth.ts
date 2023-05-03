@@ -1,6 +1,8 @@
 import { Request, Response, Express } from 'express'
 import * as bcrypt from 'bcrypt'
 import { sign, verify } from 'jsonwebtoken'
+import { backend } from '../index'
+//Imports the Database
 
 interface Token {
   userId: number
@@ -14,24 +16,9 @@ declare global {
     }
   }
 }
-
-const dummyUsers = [
-  {
-    id: 1,
-    username: 'user1',
-    password: '$2b$10$gXVc4gHCNyfjv3EveLzwuubpM71fSpIhR35RLUK5hok3ffuA4bpYW',
-  }, // bcrypt hash for 'password1'
-  {
-    id: 2,
-    username: 'user2',
-    password: '$2b$10$ydHRp2v7K/8CMllSRmWTe.RcdrQpOpZAb1NJ/6F2nOItQa.LgFVNy',
-  }, // bcrypt hash for 'password2'
-  {
-    id: 3,
-    username: 'user3',
-    password: '$2b$10$u04KSu6u3AJJTrSVXdl6B.SnkQ1DF/hfPDsC/7M/PzLp74Y3hR02i',
-  }, // bcrypt hash for 'password3'
-]
+   // password: '$1b$10$gXVc4gHCNyfjv3EveLzwuubpM71fSpIhR35RLUK5hok3ffuA4bpYW'
+   // password: '$2b$10$ydHRp2v7K/8CMllSRmWTe.RcdrQpOpZAb1NJ/6F2nOItQa.LgFVNy'
+   // password: '$2b$10$u04KSu6u3AJJTrSVXdl6B.SnkQ1DF/hfPDsC/7M/PzLp74Y3hR02i'
 
 export class Authentication {
   // Properties
@@ -43,42 +30,52 @@ export class Authentication {
     this.app.post('/login/token', this.createToken.bind(this))
   }
 
-  private async createToken(req: Request, res: Response) {
+  //Create a JWT Token for the user
+  public async createToken(req: Request, res: Response) {
     const { username, password } = req.body
 
-    const user = dummyUsers.find((user) => user.username === username)
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid username or password' })
-    }
+    // start a transaction
+    const conn = await backend.database.startTransaction()
 
+    // get users from database and check if the user exists
+    const users = await backend.database.executeSQL(`SELECT * FROM users WHERE username = '${username}'`, conn)
+
+    // check again if the sql query returned a user
+    const user = users.find((users) => users.username === username)
+
+    // if the user does not exist, return an error
+    if (!user) return res.status(401).json({ message: 'Invalid username' })
+
+    // check if the password is valid
     const validPassword = await bcrypt.compare(password, user.password)
-    if (!validPassword) {
-      return res.status(401).json({ message: 'Invalid username or password' })
-    }
 
-    const token = sign({ userId: user.id }, this.secretKey, { expiresIn: '1h' })
+    // if the password is not valid, return an error
+    if (!validPassword) return res.status(401).json({ message: 'Invalid password' })
+
+    // commit the transaction
+    await backend.database.commitTransaction(conn)
+
+   const token = sign({ userId: user.id }, this.secretKey, { expiresIn: '1h' })
     res.json({ token })
   }
 
+  // hash method
   public static async hashPassword(password: string) {
     const salt = await bcrypt.genSalt(10)
     const hash = await bcrypt.hash(password, salt)
     return hash
   }
 
+  // verify method
   public verifyToken(token: string) {
     return verify(token, this.secretKey)
   }
 
+  // authenticate method
   public authenticate(req: Request, res: Response, next: any) {
-    const authHeader = req.headers.authorization
-    if (!authHeader) {
-      return res.status(401).json({ message: 'Missing Authorization header' })
-    }
-
-    const token = authHeader.split(' ')[1]
+    const token = req.headers.authorization
     if (!token) {
-      return res.status(401).json({ message: 'Invalid token format' })
+      return res.status(401).json({ message: 'Missing Authorization header' })
     }
 
     try {
@@ -92,5 +89,5 @@ export class Authentication {
     }
   }
 }
-
+// check if string function
 const isString = (value: any): value is string => typeof value === 'string'
