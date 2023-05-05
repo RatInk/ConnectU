@@ -46,11 +46,20 @@ export class Authentication {
   private async createToken(req: Request, res: Response) {
     const { username, password } = req.body
 
-    const user = dummyUsers.find((user) => user.username === username)
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid username or password' })
-    }
+    console.log(username, password + " is logging in")
+    // start a transaction
+    const conn = await backend.database.startTransaction()
 
+    // get users from database and check if the user exists
+    const users = await backend.database.executeSQL(`SELECT * FROM Users WHERE username = '${username}'`, conn)
+
+    // check again if the sql query returned a user
+    const user = users.find((users) => users.username === username)
+
+    // if the user does not exist, return an error
+    if (!user) return res.status(401).json({ message: 'Invalid username' })
+
+    // check if the password is valid
     const validPassword = await bcrypt.compare(password, user.password)
     if (!validPassword) {
       return res.status(401).json({ message: 'Invalid username or password' })

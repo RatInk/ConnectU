@@ -17,7 +17,7 @@ const displayPosts = (post) => {
   const editButon = document.createElement("button");
   editButon.textContent = "Edit Post";
   editButon.addEventListener("click", () => {
-    window.location.href = `/editPost.html/${post.id}`;
+    window.location.href = `/editPost.html/${post_id}`;
   });
 
   postDiv.appendChild(titleElement)
