@@ -13,8 +13,8 @@ if (location.host.includes('localhost')) {
         const inputPassword = document.getElementById("password");
         const buttonLogin = document.getElementById("login");
         buttonLogin.addEventListener("click", async () => {
-        const username = inputUsername.value;
-        const password = inputPassword.value;
+        const username = inputUsername.value.trim();
+        const password = inputPassword.value.trim();
         
         if (!username || !password) return console.log("Please enter Right username and password");
         const response = await fetch("/login/token", {

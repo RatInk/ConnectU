@@ -5,6 +5,7 @@ import { Authentication } from './authentication'
 import { resolve, dirname } from 'path'
 import { Database } from './database'
 import dotenv from 'dotenv'
+import * as BodyParser from 'body-parser'
 
 dotenv.config()
 
@@ -31,10 +32,16 @@ class Backend {
     return this._database
   }
 
+  public get auth(): Authentication {
+    return this._api.auth
+  }
+
   // Constructor
   constructor() {
     this._app = express()
     this._database = new Database()
+    this._app.use(BodyParser.json())
+    this._app.use(BodyParser.urlencoded({ extended: true }))
     const auth = new Authentication(secret || "supersecret123" , this._app)
     this._api = new API(this._app, auth)
     this._env = process.env.NODE_ENV || 'development'

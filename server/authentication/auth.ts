@@ -27,6 +27,8 @@ export class Authentication {
   }
 
   private async createToken(req: Request, res: Response) {
+    //why does the server crash when i try read the request body?
+    //
     const { username, password } = req.body
 
     console.log(username, password + " is logging in")
@@ -48,7 +50,7 @@ export class Authentication {
       return res.status(401).json({ message: 'Invalid username or password' })
     }
 
-    const token = sign({ userId: user.id }, this.secretKey, { expiresIn: '1h' })
+    const token = sign({ username: username}, this.secretKey, { expiresIn: '1h' })
     res.json({ token })
   }
 
@@ -63,14 +65,9 @@ export class Authentication {
   }
 
   public authenticate(req: Request, res: Response, next: any) {
-    const authHeader = req.headers.authorization
-    if (!authHeader) {
-      return res.status(401).json({ message: 'Missing Authorization header' })
-    }
-
-    const token = authHeader.split(' ')[1]
+    const token = req.headers.authorization
     if (!token) {
-      return res.status(401).json({ message: 'Invalid token format' })
+      return res.status(401).json({ message: 'Missing Authorization header' })
     }
 
     try {
@@ -83,6 +80,7 @@ export class Authentication {
       res.status(401).json({ message: 'Invalid token' })
     }
   }
+
 }
 
 const isString = (value: any): value is string => typeof value === 'string'

@@ -20,29 +20,20 @@ export class Database {
   private initializeDBSchema = async () => {
     console.log('Initializing DB schema...')
     const conn = await this.startTransaction()
+    try {
     await this.executeSQL(DB.DB1, conn)
     await this.executeSQL(DB.DB2, conn)
     await this.executeSQL(DB.DB3, conn)
     await this.executeSQL(DB.DB4, conn)
     await this.executeSQL(DB.DB5, conn)
     await this.executeSQL(DB.DB6, conn)
-    if (!(await this.executeSQL("SELECT * FROM Roles;" ,conn ))) {
-      await this.executeSQL(DB.DB7, conn)
-      await this.executeSQL(DB.DB8, conn)
-      await this.executeSQL(DB.DB9, conn)
-      await this.executeSQL(DB.DB10, conn)
-      await this.executeSQL(DB.DB11, conn)
-      await this.executeSQL(DB.DB12, conn)
-      await this.executeSQL(DB.DB13, conn)
-      await this.executeSQL(DB.DB14, conn)
-      await this.executeSQL(DB.DB15, conn)
-      await this.executeSQL(DB.DB16, conn)
-      await this.executeSQL(DB.DB17, conn)
-      await this.executeSQL(DB.DB18, conn)
-      await this.executeSQL(DB.DB19, conn)
-      await this.executeSQL(DB.DB20, conn)
+    } catch (error) {
+      console.log(error)
     }
-
+    if (!this.executeSQL("SELECT * FROM Roles", conn)) {
+      await this.executeSQL(DB.DB7, conn)
+    }
+    
     await this.commitTransaction(conn)
   }
 

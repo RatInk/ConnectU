@@ -17,23 +17,25 @@ const displayPosts = (post) => {
   const editButon = document.createElement("button");
   editButon.textContent = "Edit Post";
   editButon.addEventListener("click", () => {
-    postId = post.id;
-    window.location.href = `/editPost.html/${postId}`;
+    window.location.href = `/editPost.html?${post.post_id}`;
   });
   const deleteButon = document.createElement("button");
   deleteButon.textContent = "Delete Post";
-  postId = post.id;
   deleteButon.addEventListener("click", async () => {
-    const response = await fetch(`/post/${postId}`, {
+    const tokenCookie = document.cookie.split(";")[1];
+    const token = tokenCookie.split("=")[1];
+    const usernameCookie = document.cookie.split(";")[0];
+    const username = usernameCookie.split("=")[1];
+    const postId = window.location.pathname.split("/")[2];
+    const response = await fetch(`/post/${post.post_id}`, {
       method: "DELETE",
       headers: {
         "Authorization": token,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username }),
     });
     if (response.status === 200) {
-      window.location.href = "/";
+      window.location.href = "./mainpage.html";
       alert("Post deleted successfully");
     }
     else {
@@ -41,11 +43,19 @@ const displayPosts = (post) => {
     }
   });
 
+  const showComments = document.createElement("button");
+  showComments.textContent = "Show Comments";
+  showComments.addEventListener("click", async () => {
+    window.location.href = `/comments.html?${post.post_id}`;
+  });
+
+
   postDiv.appendChild(titleElement)
   postDiv.appendChild(contentElement);
   postDiv.appendChild(usernameElement);
   postDiv.appendChild(editButon);
   postDiv.appendChild(deleteButon);
+  postDiv.appendChild(showComments);
 
   return postDiv;
 }
@@ -57,7 +67,6 @@ const displayAllPosts = async () => {
   const response = await fetch("/posts", {
     method: "GET",
     headers: {
-      "Content-Type": "application/json",
       "Authorization": token
     }
   });
@@ -68,7 +77,6 @@ const displayAllPosts = async () => {
     postsDiv.appendChild(postElement);
   });
 };
-
 
 displayAllPosts();
 
@@ -95,42 +103,4 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  const formEditPost = document.getElementById("formEdit");
-  formEditPost.addEventListener("submit"), async (event) => {
-
-  }
-})
-
-const formEditPost = document.getElementById("formEdit");
-formEditPost.addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  const formData = new FormData(event.target);
-  const title = formData.get("title");
-  const content = formData.get("content");
-
-  const tokenCookie = document.cookie.split(";")[1];
-  const token = tokenCookie.split("=")[1];
-  const usernameCookie = document.cookie.split(";")[0];
-  const username = usernameCookie.split("=")[1];
-  const postId = window.location.pathname.split("/")[2];
-
-  if (!title || !content) return;
-  const response = await fetch(`/post/${postId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": token,
-    },
-    body: JSON.stringify({ title, content, username}),
-  });
-  if (response.status === 200) {
-    window.location.href = "/";
-    alert("Post edited successfully");
-  }
-  else {
-    alert("Post not edited");
-  }
-});
-
+//fetch all coments for a post with the post_id in the url
