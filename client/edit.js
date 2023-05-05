@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
     const formEditPost = document.getElementById("formEdit");
     formEditPost.addEventListener("submit", async (event) => {
@@ -5,10 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData(event.target);
       const title = formData.get("title");
       const content = formData.get("content");
-      const tokenCookie = document.cookie.split(";")[1];
-      const token = tokenCookie.split("=")[1];
-      const usernameCookie = document.cookie.split(";")[0];
-      const username = usernameCookie.split("=")[1];
+      const token = document.cookie.split("=")[1];
       const post_id = window.location.search.split("?")[1];
       if (!title || !content) return;
       const response = await fetch(`/post/${post_id}`, {
@@ -35,10 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault();
       const formData = new FormData(event.target);
       const comment = formData.get("comment");
-      const tokenCookie = document.cookie.split(";")[1];
-      const token = tokenCookie.split("=")[1];
-      const usernameCookie = document.cookie.split(";")[0];
-      const username = usernameCookie.split("=")[1];
+
+      const token = document.cookie.split("=")[1];
       const comment_id = window.location.search.split("?")[1];
       if (!comment) return;
       const response = await fetch(`/comment/${comment_id}`, {
@@ -58,3 +54,28 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const deleteButton = document.getElementById("deleteButton");
+    deleteButton.addEventListener("click", async (event) => {
+      event.preventDefault();
+
+      const token = document.cookie.split("=")[1];
+      const post_id = window.location.search.split("?")[1];
+      const response = await fetch(`/post/${post_id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": token,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status === 200) {
+        window.location.href = "./mainpage.html";
+        alert("Post deleted successfully");
+      }
+      else {
+        alert("Post not deleted");
+      }
+    });
+  }
+  );

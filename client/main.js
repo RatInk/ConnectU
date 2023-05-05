@@ -19,29 +19,7 @@ const displayPosts = (post) => {
   editButon.addEventListener("click", () => {
     window.location.href = `/editPost.html?${post.post_id}`;
   });
-  const deleteButon = document.createElement("button");
-  deleteButon.textContent = "Delete Post";
-  deleteButon.addEventListener("click", async () => {
-    const tokenCookie = document.cookie.split(";")[1];
-    const token = tokenCookie.split("=")[1];
-    const usernameCookie = document.cookie.split(";")[0];
-    const username = usernameCookie.split("=")[1];
-    const postId = window.location.pathname.split("/")[2];
-    const response = await fetch(`/post/${post.post_id}`, {
-      method: "DELETE",
-      headers: {
-        "Authorization": token,
-        "Content-Type": "application/json",
-      },
-    });
-    if (response.status === 200) {
-      window.location.href = "./mainpage.html";
-      alert("Post deleted successfully");
-    }
-    else {
-      alert("Post not deleted");
-    }
-  });
+
 
   const showComments = document.createElement("button");
   showComments.textContent = "Show Comments";
@@ -49,21 +27,66 @@ const displayPosts = (post) => {
     window.location.href = `/comments.html?${post.post_id}`;
   });
 
+  const likeCommentButton = document.createElement("button");
+  likeCommentButton.textContent = "Like Post";
+  likeCommentButton.addEventListener("click", async () => {
+    const token = document.cookie.split("=")[1];
+
+    const response = await fetch(`/like`, {
+      method: "POST",
+      headers: {
+        "Authorization": token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ post_id: post.post_id }),
+
+    });
+
+    if (response.status === 200) {
+      alert("Post liked successfully");
+    }
+    else {
+      alert("Post not liked");
+    }
+  });
+
+  const dislikeCommentButton = document.createElement("button");
+  dislikeCommentButton.textContent = "DisLike Post";
+  dislikeCommentButton.addEventListener("click", async () => {
+    const token = document.cookie.split("=")[1];
+
+    const response = await fetch(`/dislike`, {
+      method: "POST",
+      headers: {
+        "Authorization": token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ post_id: post.post_id }),
+
+    });
+
+    if (response.status === 200 ) {
+      alert("Post disliked successfully");
+    }
+    else {
+      alert("Post not liked");
+    }
+  });
+
 
   postDiv.appendChild(titleElement)
   postDiv.appendChild(contentElement);
   postDiv.appendChild(usernameElement);
   postDiv.appendChild(editButon);
-  postDiv.appendChild(deleteButon);
   postDiv.appendChild(showComments);
+  postDiv.appendChild(likeCommentButton);
+  postDiv.appendChild(dislikeCommentButton);
 
   return postDiv;
 }
 
 const displayAllPosts = async () => {
-  const tokenCookie = document.cookie.split(";")[1];
-  const token = tokenCookie.split("=")[1];
-  const usernameCookie = document.cookie.split(";")[0];
+  const token = document.cookie.split("=")[1];  
   const response = await fetch("/posts", {
     method: "GET",
     headers: {
@@ -87,10 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const formData = new FormData(event.target);
     const title = formData.get("title");
     const content = formData.get("content");
-    const tokenCookie = document.cookie.split(";")[1];
-    const token = tokenCookie.split("=")[1];
-    const usernameCookie = document.cookie.split(";")[0];
-    const username = usernameCookie.split("=")[1];
+    const token = document.cookie.split("=")[1];
     if (!title || !content) return;
     const response = await fetch("/post", {
       method: "POST",
@@ -98,9 +118,15 @@ document.addEventListener("DOMContentLoaded", () => {
         "Content-Type": "application/json",
         "Authorization": token,
       },
-      body: JSON.stringify({ title, content, username }),
+      body: JSON.stringify({ title, content }),
     });
+    if (response.status === 200) {
+      window.location.href = "./mainpage.html";
+      alert("Post created successfully");
+    }
+    else {
+      alert("Post not created");
+    }
   });
 });
 
-//fetch all coments for a post with the post_id in the url

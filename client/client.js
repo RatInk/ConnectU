@@ -8,6 +8,7 @@ if (location.host.includes('localhost')) {
   )
 }
 
+
   document.addEventListener("DOMContentLoaded", () => {
         const inputUsername = document.getElementById("username");
         const inputPassword = document.getElementById("password");
@@ -26,7 +27,6 @@ if (location.host.includes('localhost')) {
         })
           const { token } = await response.json();
           document.cookie = "token=" + token;
-          document.cookie = "username=" + username;
 
         //check status 401
         if (response.status === 401) {
@@ -52,6 +52,7 @@ if (location.host.includes('localhost')) {
           "content-Type": "application/json",
         },
         body: JSON.stringify({ username, password }),
+
       })
     })
   })

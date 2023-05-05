@@ -20,7 +20,6 @@ CREATE TABLE IF NOT EXISTS Posts (
     content varchar(1000) NOT NULL,
     PRIMARY KEY (post_id),
     KEY user_posts (username),
-    KEY comments (comments),
     FOREIGN KEY (username) REFERENCES Users (username)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 `
