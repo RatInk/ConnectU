@@ -1,5 +1,6 @@
 import { Request, Response, Express } from 'express'
 import { Authentication } from '../authentication'
+import { backend } from '../index'
 
 export class API {
   // Properties
@@ -15,6 +16,8 @@ export class API {
     this.app.get('/post/:id', this.auth.authenticate.bind(this.auth), this.getPost)
     this.app.post('/post', this.auth.authenticate.bind(this.auth), this.createPost)
     this.app.put('/posts:id', this.auth.authenticate.bind(this.auth), this.editPost)
+    this.app.delete('/posts:id', this.auth.authenticate.bind(this.auth), this.deletePost)
+    this.app.post('/comment' , this.auth.authenticate.bind(this.auth), this.createComment)
   }
 
   // Methods
@@ -47,7 +50,7 @@ export class API {
     }
     catch (error) {
       await backend.database.commitTransaction(conn)
-      return res.status(500).json({ message: 'Error getting post' })
+      return res.status(500).json({ message: 'Error while getting post' })
     }
   }
 
@@ -58,7 +61,7 @@ export class API {
         const response = await backend.database.executeSQL('SELECT * FROM Posts', conn)
         return res.status(200).json(response)
       } catch (error) {
-        return res.status(500).json({ message: 'Error getting posts' })
+        return res.status(500).json({ message: 'Error while getting posts' })
       }
   }
 
@@ -76,8 +79,8 @@ export class API {
     }
     catch (error){
       console.log(error)
-      await backend.database.commitTransaction(conn)
-      return res.status(500).json({ message: 'Error creating post' })
+    await backend.database.commitTransaction(conn)
+      return res.status(500).json({ message: 'Error while creating post' })
     }
   }
 
@@ -94,7 +97,7 @@ export class API {
     }
     catch {
       await backend.database.commitTransaction(conn)
-      return res.status(500).json({ message: 'Error editing post' })
+      return res.status(500).json({ message: 'Error while editing post' })
     }
   }
   private async deletePost(req: Request, res: Response) {
@@ -109,7 +112,26 @@ export class API {
     }
     catch {
       await backend.database.commitTransaction(conn)
-      return res.status(500).json({ message: 'Error deleting post' })
+      return res.status(500).json({ message: 'Error while deleting post' })
+    }
+  }
+
+  private async createComment(req: Request, res: Response) {
+    const { username, title, content } = req.body
+
+    console.log(username, title, content)
+    const conn = await backend.database.startTransaction()
+
+    try {
+      await backend.database.executeSQL(`INSERT INTO Posts(username, title, content) VALUES ('${username}', '${title}', '${content}')`, conn)          
+      await backend.database.commitTransaction(conn)
+
+      return res.status(200).json("true")
+    }
+    catch (error){
+      console.log(error)
+    await backend.database.commitTransaction(conn)
+      return res.status(500).json({ message: 'Error while creating post' })
     }
   }
 

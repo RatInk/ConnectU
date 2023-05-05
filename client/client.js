@@ -16,7 +16,7 @@ if (location.host.includes('localhost')) {
         const username = inputUsername.value;
         const password = inputPassword.value;
         
-        if (!username || !password) return 
+        if (!username || !password) return console.log("Please enter Right username and password");
         const response = await fetch("/login/token", {
           method: "POST",
           headers: {

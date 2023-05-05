@@ -1,6 +1,7 @@
 import { Request, Response, Express } from 'express'
 import * as bcrypt from 'bcrypt'
 import { sign, verify } from 'jsonwebtoken'
+import { backend } from '../index'
 
 interface Token {
   userId: number
@@ -14,24 +15,6 @@ declare global {
     }
   }
 }
-
-const dummyUsers = [
-  {
-    id: 1,
-    username: 'user1',
-    password: '$2b$10$gXVc4gHCNyfjv3EveLzwuubpM71fSpIhR35RLUK5hok3ffuA4bpYW',
-  }, // bcrypt hash for 'password1'
-  {
-    id: 2,
-    username: 'user2',
-    password: '$2b$10$ydHRp2v7K/8CMllSRmWTe.RcdrQpOpZAb1NJ/6F2nOItQa.LgFVNy',
-  }, // bcrypt hash for 'password2'
-  {
-    id: 3,
-    username: 'user3',
-    password: '$2b$10$u04KSu6u3AJJTrSVXdl6B.SnkQ1DF/hfPDsC/7M/PzLp74Y3hR02i',
-  }, // bcrypt hash for 'password3'
-]
 
 export class Authentication {
   // Properties

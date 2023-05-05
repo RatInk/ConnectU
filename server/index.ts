@@ -1,8 +1,15 @@
 import express, { Express, Request, Response } from 'express'
 import { API } from './api'
 import http from 'http'
+import { Authentication } from './authentication'
 import { resolve, dirname } from 'path'
 import { Database } from './database'
+import dotenv from 'dotenv'
+
+dotenv.config()
+
+
+const secret = process.env.SECRET
 
 class Backend {
   // Properties
@@ -28,7 +35,8 @@ class Backend {
   constructor() {
     this._app = express()
     this._database = new Database()
-    this._api = new API(this._app)
+    const auth = new Authentication(secret || "supersecret123" , this._app)
+    this._api = new API(this._app, auth)
     this._env = process.env.NODE_ENV || 'development'
 
     this.setupStaticFiles()
@@ -57,5 +65,5 @@ class Backend {
   }
 }
 
-const backend = new Backend()
+export const backend = new Backend()
 export const viteNodeApp = backend.app
