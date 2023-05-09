@@ -8,9 +8,9 @@ export class Database {
   // Constructor
   constructor() {
     this._pool = mariadb.createPool({
-      database: process.env.DB_NAME || 'minitwitter',
+      database: process.env.DB_NAME || 'futureforward',
       host: process.env.DB_HOST || 'localhost',
-      user: process.env.DB_USER || 'minitwitter',
+      user: process.env.DB_USER || 'futureforward',
       password: process.env.DB_PASSWORD || 'supersecret123',
       connectionLimit: 5,
     })
@@ -21,12 +21,7 @@ export class Database {
     console.log('Initializing DB schema...')
     const conn = await this.startTransaction()
     try {
-      await this.executeSQL(DB.DB1, conn)
-      await this.executeSQL(DB.DB2, conn)
-      await this.executeSQL(DB.DB3, conn)
-      await this.executeSQL(DB.DB4, conn)
-      await this.executeSQL(DB.DB5, conn)
-      await this.executeSQL(DB.DB6, conn)
+      // ... create tables
     } catch (error) {
       console.log(error)
       await this.rollbackTransaction(conn)

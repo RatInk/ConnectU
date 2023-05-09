@@ -1,36 +1,25 @@
 <!DOCTYPE html>
-<html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/style.css" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="client.js"></script>
-    <title>Typescript Starter</title>
-    
-  </head>
-  <body class="flex flex-col max-w-sm m-auto">
-    <h1>Simple Typescript Starter</h1>
-    <div class="flex gap-2">
-      <div class="flex flex-col">
-        <label for="username" class="font-bold">Username</label>
-        <input
-          type="text"
-          id="username"
-          class="border-2 border-gray-400 rounded-md p-2"
-        />
-      </div>
-      <div class="flex flex-col">
-        <label for="password" class="font-bold">Password</label>
-        <input
-          type="password"
-          id="password"
-          class="border-2 border-gray-400 rounded-md p-2"
-        />
-    </div>
-    <button id="login" class="bg-blue-500 text-white rounded-md p-2">Login</button>
-  </body>
-</html>
+<html lang="en">
 
-<a href="registration.html">Dont Have and Account Register here</a>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css" />
+  <script src="client.js"></script>
+  <title>Login</title>
+</head>
+
+<body>
+  <h1>Future Forward</h1>
+  <div class="container">
+    <form id="login-form">
+      <input type="text" placeholder="Username" required="required" />
+      <input type="password" placeholder="Password" required="required" />
+      <button>Log In</button>
+    </form>
+    <p>Don't have an Account? Sign Up <a href="registration.html">here</a></p>
+  </div>
+</body>
+
+</html>

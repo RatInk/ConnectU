@@ -9,8 +9,8 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=supersecret123
-      - MYSQL_DATABASE=minitwitter
-      - MYSQL_USER=minitwitter
+      - MYSQL_DATABASE=futureforward
+      - MYSQL_USER=futureforward
       - MYSQL_PASSWORD=supersecret123
     ports:
       - 3306:3306

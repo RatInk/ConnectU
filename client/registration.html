@@ -1,34 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="client.js"></script>
-    <title>Registration</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/style.css" />
+  <script src="client.js"></script>
+  <title>Sign Up</title>
 </head>
+
 <body>
-        <div class="flex gap-2">
-      <div class="flex flex-col">
-        <label for="username" class="font-bold">Username</label>
-        <input
-          type="text"
-          id="reUsername"
-          class="border-2 border-gray-400 rounded-md p-2"
-        />
-      </div>
-      <div class="flex flex-col">
-        <label for="password" class="font-bold">Password</label>
-        <input
-          type="password"
-          id="rePassword"
-          class="border-2 border-gray-400 rounded-md p-2"
-        />
-    </div>
-    <button id="register" class="bg-blue-500 text-white rounded-md p-2">Register</button>
-
-
-    <a href="index.html">Go back</a>
+  <h1>Future Forward</h1>
+  <div class="container">
+    <form id="signup-form">
+      <input type="text" placeholder="Username" required="required" />
+      <input type="password" placeholder="Password" required="required" />
+      <input type="password" placeholder="Repeat Password" required="required" />
+      <button>Sign Up</button>
+    </form>
+    <p>Already have an Account? Log In <a href="index.html">here</a></p>
+  </div>
 </body>
-</html>
 
+</html>

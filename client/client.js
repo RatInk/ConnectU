@@ -46,7 +46,7 @@ if (location.host.includes('localhost')) {
       const username = inputUsername.value;
       const password = inputPassword.value;
       if (!username || !password) return;
-      const response = await fetch("/Register", {
+      const response = await fetch("/register", {
         method: "POST",
         headers: {
           "content-Type": "application/json",
